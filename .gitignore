@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+cpp/test_avl
+cpp/test_avl.exe
+*.out
+notas.csv
+entregas/
+.DS_Store
+.idea/
+.vscode/

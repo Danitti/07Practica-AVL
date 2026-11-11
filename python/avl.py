@@ -113,8 +113,8 @@ def rotar_izquierda(x: Nodo):
     x.der = y.izq
     y.izq = x
     
-    actualizar_altura(y)
     actualizar_altura(x)
+    actualizar_altura(y)
     
     return y
 
@@ -125,7 +125,7 @@ def equilibrar(nodo: Nodo):
     """Actualiza la altura de nodo y, si su factor de equilibrio es 2 o -2,
     aplica la rotacion que corresponde (los cuatro casos). Los dos subarboles
     de nodo ya son AVL. Devuelve la raiz del subarbol ya equilibrado.
-    Coste: tiempo O(?), memoria extra O(?)."""
+    Coste: tiempo O(1), memoria extra O(1)."""
     
     actualizar_altura(nodo)
     factor_equilibrio_nodo = factor_equilibrio(nodo)
@@ -159,18 +159,80 @@ def equilibrar(nodo: Nodo):
 
 # ------------------------------------------------------------ ejercicio 3
 
-def insertar(raiz, clave):
+def insertar(raiz: Nodo, clave):
     """Inserta clave en el AVL de raiz `raiz` y devuelve la nueva raiz.
     Si la clave ya esta, el arbol no cambia.
-    Coste: tiempo O(?), memoria extra O(?)."""
-    raise NotImplementedError("TODO insertar")
+    Coste: tiempo O(log(n)), memoria extra O(log(n))."""
+    
+
+    if raiz is None:
+        return Nodo(clave)
+    
+    if clave < raiz.clave:
+        raiz.izq = insertar(raiz.izq, clave)
+    
+    elif clave > raiz.clave:
+        raiz.der = insertar(raiz.der, clave)
+    
+    else:
+        return raiz
+    
+    return equilibrar(raiz)
 
 
 # ------------------------------------------------------------ ampliacion
 
-def es_avl(raiz):
+def es_bst(raiz: Nodo):
+    if (raiz is None):
+        return True
+    
+    pila = [raiz.clave]
+    nodo_actual = raiz
+    while len(pila) != 0:
+        if nodo_actual is None:
+            nodo_actual = pila.pop()
+            nodo_actual = nodo_actual.der
+                
+        
+        else:
+            for valor in pila:
+                if nodo_actual.clave >= valor:
+                    return False
+            
+            pila.append(nodo_actual.clave)
+            nodo_actual = nodo_actual.izq
+            
+    return True
+        
+        
+            
+        
+        
+
+def es_avl(raiz: Nodo):
     """True si el arbol es un BST (claves estrictamente crecientes en inorden)
     y TODOS sus nodos tienen factor de equilibrio -1, 0 o 1. No se fia del
     campo altura: lo calcula. Un solo recorrido.
-    Coste: tiempo O(?), memoria extra O(?)."""
-    raise NotImplementedError("TODO es_avl")
+    Coste: tiempo O(n), memoria extra O(?)."""
+    
+    if raiz is None:
+        return True
+    
+    actualizar_altura(raiz)
+        
+    if (raiz.izq is None and raiz.der is None):
+        return True
+        
+    if not es_bst(raiz):
+        return False
+    
+    
+    
+    actualizar_altura(raiz)
+    factor_raiz = factor_equilibrio(raiz)
+    if factor_raiz >= 2 or factor_raiz <= -2:
+        return False
+    
+    return es_avl(raiz.izq) and es_avl(raiz.der)
+    
+    

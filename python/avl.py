@@ -82,7 +82,7 @@ def construir(claves):
 
 # ------------------------------------------------------------ ejercicio 1
 
-def rotar_derecha(y):
+def rotar_derecha(y: Nodo):
     """Rotacion simple a la derecha sobre y (y.izq no es None).
 
             y                x
@@ -92,24 +92,69 @@ def rotar_derecha(y):
         T1  T2                T2  T3
 
     Devuelve x, la nueva raiz del subarbol, con las alturas actualizadas.
-    Coste: tiempo O(?), memoria extra O(?)."""
-    raise NotImplementedError("TODO rotar_derecha")
+    Coste: tiempo O(1), memoria extra O(0)."""
+    
+    x = y.izq
+    
+    y.izq = x.der
+    x.der = y
+    actualizar_altura(y)
+    actualizar_altura(x)
+    
+    return x    
 
 
-def rotar_izquierda(x):
+def rotar_izquierda(x: Nodo):
     """Rotacion simple a la izquierda sobre x (x.der no es None). Simetrica.
-    Coste: tiempo O(?), memoria extra O(?)."""
-    raise NotImplementedError("TODO rotar_izquierda")
+    Coste: tiempo O(1), memoria extra O(0)."""
+    
+    y = x.der
+    
+    x.der = y.izq
+    y.izq = x
+    
+    actualizar_altura(y)
+    actualizar_altura(x)
+    
+    return y
 
 
 # ------------------------------------------------------------ ejercicio 2
 
-def equilibrar(nodo):
+def equilibrar(nodo: Nodo):
     """Actualiza la altura de nodo y, si su factor de equilibrio es 2 o -2,
     aplica la rotacion que corresponde (los cuatro casos). Los dos subarboles
     de nodo ya son AVL. Devuelve la raiz del subarbol ya equilibrado.
     Coste: tiempo O(?), memoria extra O(?)."""
-    raise NotImplementedError("TODO equilibrar")
+    
+    actualizar_altura(nodo)
+    factor_equilibrio_nodo = factor_equilibrio(nodo)
+    
+    if factor_equilibrio_nodo >= -1 and factor_equilibrio_nodo <= 1:
+        return nodo
+    
+    if factor_equilibrio_nodo == 2:
+        actualizar_altura(nodo.izq)
+        factor_equilibrio_izq = factor_equilibrio(nodo.izq)
+        
+        if factor_equilibrio_izq >= 0:
+            return rotar_derecha(nodo)
+        
+        else: # factor_equilibrio_izq < 0
+            nodo.izq = rotar_izquierda(nodo.izq)
+            return rotar_derecha(nodo)
+    
+    if factor_equilibrio_nodo == -2:
+        actualizar_altura(nodo.der)
+        factor_equilibrio_nodo_der = factor_equilibrio(nodo.der)
+        
+        if factor_equilibrio_nodo_der <= 0:
+            return rotar_izquierda(nodo)
+        
+        else:
+            nodo.der = rotar_derecha(nodo.der)
+            return rotar_izquierda(nodo)
+    
 
 
 # ------------------------------------------------------------ ejercicio 3
